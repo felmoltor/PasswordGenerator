@@ -6,6 +6,8 @@
 #            with the characters will be used in the string generation.
 #            It is possible to set a template string like "h--" to generate a string 
 #            starting allways with 'h'.
+# Original Idea: Jonas Andradas (@jandradas)
+#
 # Example:
 #    * eed file Containing letters "a" and "o"
 #    * Template like "p-ll-"
@@ -13,6 +15,18 @@
 
 import sys
 import os
+import argparse
+
+def readUserOptions():
+    parser =  argparse.ArgumentParser(description='Password generator with seed chars and templates')
+    parser.usage = "%s [OPTIONS] -s <seedfile> -t <template string>" % sys.argv[0]
+    parser.add_argument('-t', '--template', help="Template word to fill up with the seed chars",dest="pwdtemplate",default=None,required=True)
+    parser.add_argument('-s', '--seed', help="File name with the seed letters",dest="seedfile",default=None,required=True)
+    parser.add_argument('-o', '--outputformat', help="TODO: Output format of the generated passwords (sqlite|text|screen). Default is screen.",dest="outformat",default="screen")
+    parser.add_argument('-f', '--file', help="Output file name to store results",dest="ofile",default=None)
+    args = parser.parse_args()
+    
+    return args
 
 #########################
 
@@ -77,29 +91,51 @@ def generateFullCombinations(template,seedchars):
 
 #########################
 
+def calculateUniverseSize(template,seeds):
+    nspaces = template.count("-")
+    base = len(seeds)
+    
+    return pow(base,nspaces)
+
+#########################
+
 ########
 # MAIN #
 ########
 
-if (len(sys.argv)!=3):
-    print "Usage: %s <seed_file> <template string>" % sys.argv[0]
-    print "Example: %s seed.txt Pwd----123" % sys.argv[0]
+options = readUserOptions()
+print options
 
-else:
-    seedfile = sys.argv[1]
-    pwdtemplate = sys.argv[2]
+outputfile = None
+seedfile = options.seedfile
+pwdtemplate = options.pwdtemplate
+if (options.ofile is not None):
+    outputfile = options.ofile
+
+if os.path.exists(seedfile):
+    sf = open(seedfile,"r")
+    seedchars = []
+    for line in sf:
+        for ch in line.strip():
+            if ch not in seedchars: # Avoid repeated chars
+                seedchars.append(ch)
     
-    if os.path.exists(seedfile):
-        sf = open(seedfile,"r")
-        seedchars = []
-        for line in sf:
-            for ch in line.strip():
-                if ch not in seedchars: # Avoid repeated chars
-                    seedchars.append(ch)
-        
-        seedchars.sort()
-        # Get the number of spaces with '-' to fill with the seed chars from pwdtemplate
+    seedchars.sort()
+    sure = raw_input ("You are going to generate and store %s strings. Are you sure you want to continue? [N/y]: " % calculateUniverseSize(pwdtemplate,seedchars))
+    if (sure.upper() == "Y" or sure.upper() == "YES"):
         pwduniverse = generateFullCombinations(pwdtemplate,seedchars)
-        print pwduniverse
+        # Store in output file if exists
+        print "***** DUMPING RESULTS ******"
+        if (outputfile is not None):
+            of = open(outputfile,"w")
+            for pwd in pwduniverse:
+                of.write("%s\n" % pwd)
+            of.close()
+        else:
+            for pwd in pwduniverse:
+                print pwd
+        print "********** DONE ************"
     else:
-        print "Error. Seed file %s does not exists." % seedfile
+        print "Operation cancelled by user..."
+else:
+    print "Error. Seed file %s does not exists." % seedfile
