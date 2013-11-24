@@ -17,8 +17,26 @@ import sys
 import os
 import argparse
 
+def printBanner():
+    banner = """
+     _____  ___                                    _          ___   _ 
+    /__   \/ _ \__ _ ___ _____      _____  _ __ __| | __   __/ _ \ / |
+      / /\/ /_)/ _` / __/ __\ \ /\ / / _ \| '__/ _` | \ \ / / | | || |
+     / / / ___/ (_| \__ \__ \\\\ V  V / (_) | | | (_| |  \ V /| |_| || |
+     \/  \/    \__,_|___/___/ \_/\_/ \___/|_|  \__,_|   \_/  \___(_)_|
+     
+    ****************************************************
+    * Password generator with seed chars and templates *
+    * Author: @felmoltor                               *
+    * Date: November 2013                              *
+    * Version: v0.1                                    *
+    ****************************************************
+    
+    """
+    print banner
+
 def readUserOptions():
-    parser =  argparse.ArgumentParser(description='Password generator with seed chars and templates')
+    parser =  argparse.ArgumentParser(description="Password generator with seed chars and templates")
     parser.usage = "%s [OPTIONS] -s <seedfile> -t <template string>" % sys.argv[0]
     parser.add_argument('-t', '--template', help="Template word to fill up with the seed chars",dest="pwdtemplate",default=None,required=True)
     parser.add_argument('-s', '--seed', help="File name with the seed letters",dest="seedfile",default=None,required=True)
@@ -103,6 +121,7 @@ def calculateUniverseSize(template,seeds):
 # MAIN #
 ########
 
+printBanner()
 options = readUserOptions()
 print options
 
