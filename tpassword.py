@@ -16,6 +16,7 @@
 import sys
 import os
 import argparse
+import sqlite3
 
 def printBanner():
     banner = """
@@ -40,7 +41,7 @@ def readUserOptions():
     parser.usage = "%s [OPTIONS] -s <seedfile> -t <template string>" % sys.argv[0]
     parser.add_argument('-t', '--template', help="Template word to fill up with the seed chars",dest="pwdtemplate",default=None,required=True)
     parser.add_argument('-s', '--seed', help="File name with the seed letters",dest="seedfile",default=None,required=True)
-    parser.add_argument('-o', '--outputformat', help="TODO: Output format of the generated passwords (sqlite|text|screen). Default is screen.",dest="outformat",default="screen")
+    parser.add_argument('-o', '--outputformat', help="TODO: Output format of the generated passwords (sqlite|file|screen). Default is screen.",dest="outformat",default="screen")
     parser.add_argument('-f', '--file', help="Output file name to store results",dest="ofile",default=None)
     args = parser.parse_args()
     
@@ -123,7 +124,6 @@ def calculateUniverseSize(template,seeds):
 
 printBanner()
 options = readUserOptions()
-print options
 
 outputfile = None
 seedfile = options.seedfile
@@ -145,11 +145,28 @@ if os.path.exists(seedfile):
         pwduniverse = generateFullCombinations(pwdtemplate,seedchars)
         # Store in output file if exists
         print "***** DUMPING RESULTS ******"
-        if (outputfile is not None):
-            of = open(outputfile,"w")
-            for pwd in pwduniverse:
-                of.write("%s\n" % pwd)
-            of.close()
+        if (options.outformat == "file"):
+            if (outputfile is not None):
+                of = open(outputfile,"w")
+                for pwd in pwduniverse:
+                    of.write("%s\n" % pwd)
+                of.close()
+            else:
+                for pwd in pwduniverse:
+                    print pwd
+        elif (options.outformat == "sqlite"):
+            if (outputfile is not None):
+                if (not (outputfile.endswith(".db"))):
+                    outputfile = "%s.db" % outputfile
+                oc = sqlite3.connect(outputfile)
+                oc.execute('''CREATE TABLE Passwords
+                (Password CHAR(%s));''' % len(pwdtemplate))
+                for pwd in pwduniverse:
+                    oc.execute("INSERT INTO Passwords (Password) VALUES ('%s')")
+                oc.close()
+            else:
+                for pwd in pwduniverse:
+                    print pwd
         else:
             for pwd in pwduniverse:
                 print pwd
