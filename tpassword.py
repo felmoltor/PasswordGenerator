@@ -159,10 +159,12 @@ if os.path.exists(seedfile):
                 if (not (outputfile.endswith(".db"))):
                     outputfile = "%s.db" % outputfile
                 oc = sqlite3.connect(outputfile)
+                oc.execute("DROP TABLE IF EXISTS Passwords")
                 oc.execute('''CREATE TABLE Passwords
                 (Password CHAR(%s));''' % len(pwdtemplate))
                 for pwd in pwduniverse:
-                    oc.execute("INSERT INTO Passwords (Password) VALUES ('%s')")
+                    oc.execute("INSERT INTO Passwords (Password) VALUES ('%s')" % pwd)
+                oc.commit()
                 oc.close()
             else:
                 for pwd in pwduniverse:
