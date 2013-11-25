@@ -41,7 +41,7 @@ def readUserOptions():
     parser.usage = "%s [OPTIONS] -s <seedfile> -t <template string>" % sys.argv[0]
     parser.add_argument('-t', '--template', help="Template word to fill up with the seed chars",dest="pwdtemplate",default=None,required=True)
     parser.add_argument('-s', '--seed', help="File name with the seed letters",dest="seedfile",default=None,required=True)
-    parser.add_argument('-o', '--outputformat', help="TODO: Output format of the generated passwords (sqlite|file|screen). Default is screen.",dest="outformat",default="screen")
+    parser.add_argument('-o', '--outputformat', help="Output format of the generated passwords (sqlite|file|screen). Default is screen.",dest="outformat",default="screen")
     parser.add_argument('-f', '--file', help="Output file name to store results",dest="ofile",default=None)
     args = parser.parse_args()
     
@@ -144,7 +144,7 @@ if os.path.exists(seedfile):
     if (sure.upper() == "Y" or sure.upper() == "YES"):
         pwduniverse = generateFullCombinations(pwdtemplate,seedchars)
         # Store in output file if exists
-        print "***** DUMPING RESULTS ******"
+        print "***** DUMPING RESULTS TO %s ******" % outputfile
         if (options.outformat == "file"):
             if (outputfile is not None):
                 of = open(outputfile,"w")
@@ -172,7 +172,7 @@ if os.path.exists(seedfile):
         else:
             for pwd in pwduniverse:
                 print pwd
-        print "********** DONE ************"
+        print " DONE "
     else:
         print "Operation cancelled by user..."
 else:
