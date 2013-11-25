@@ -5,11 +5,13 @@ Generates all possible password strings with  a seed file and and a template wor
 
 **Usage**
 
+```
 usage: ./generate.py [OPTIONS] -s <seedfile> -t <template string>
 
 Password generator with seed chars and templates
 
 optional arguments:
+
   -h, --help            show this help message and exit
   -t PWDTEMPLATE, --template PWDTEMPLATE
                         Template word to fill up with the seed chars
@@ -21,3 +23,4 @@ optional arguments:
   -f OFILE, --file OFILE
                         Output file name to store results
 
+```
