@@ -17,6 +17,7 @@ import sys
 import os
 import argparse
 import sqlite3
+# from termcolor import colored
 
 def printBanner():
     banner = """
@@ -44,7 +45,7 @@ def readUserOptions():
     parser.add_argument('-o', '--outputformat', help="Output format of the generated passwords (sqlite|file|screen). Default is screen.",dest="outformat",default="screen")
     parser.add_argument('-f', '--file', help="Output file name to store results",dest="ofile",default=None)
     args = parser.parse_args()
-    
+
     return args
 
 #########################
@@ -71,7 +72,7 @@ def generatePwdFromIndex(template,seedchars,seedindex):
         templatearr.append(ch)
     
     for ch in templatearr:
-        if (ch == "-"):
+        if (ch == "*"):
             templatearr[chposition] = seedchars[seedindex[usedindex]]
             usedindex += 1
         chposition += 1
@@ -89,7 +90,7 @@ def allZeros(seedindex):
 
 def generateFullCombinations(template,seedchars):
     seedindex = []
-    nspaces = template.count("-")
+    nspaces = template.count("*")
     universebase = len(seedchars)
     pwds = []
     
@@ -111,7 +112,7 @@ def generateFullCombinations(template,seedchars):
 #########################
 
 def calculateUniverseSize(template,seeds):
-    nspaces = template.count("-")
+    nspaces = template.count("*")
     base = len(seeds)
     
     return pow(base,nspaces)
