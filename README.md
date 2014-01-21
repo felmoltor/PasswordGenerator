@@ -14,7 +14,7 @@ optional arguments:
 
   -h, --help            show this help message and exit
   -t PWDTEMPLATE, --template PWDTEMPLATE
-                        Template word to fill up with the seed chars
+                        Template word to fill up with the seed chars (example: "**Pwd*")
   -s SEEDFILE, --seed SEEDFILE
                         File name with the seed letters
   -o OUTFORMAT, --outputformat OUTFORMAT
